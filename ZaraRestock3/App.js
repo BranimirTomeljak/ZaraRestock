@@ -15,7 +15,6 @@ const App = () => {
   const [value, setValue] = useState("");
 
   const handleSubmit = () => {
-    console.log(value);
     axios
       .post("http://localhost:3000/api/analyser", { value })
       .then((response) => {
@@ -32,7 +31,7 @@ const App = () => {
         value={value}
         onChangeText={setValue}
         placeholder="Enter some data"
-        style={{ height: 40, borderColor: "gray", borderWidth: 1 }}
+        style={styles.button}
       />
       <Button title="Submit" onPress={handleSubmit} />
       <StatusBar style="auto" />
@@ -47,5 +46,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  button: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
   },
 });
