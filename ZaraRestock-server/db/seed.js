@@ -15,13 +15,9 @@ CREATE SCHEMA public;
 
 const sql_create_users = `CREATE TABLE users (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name text NOT NULL,
-    surname text NOT NULL,
-    sex text NOT NULL,
-    phoneNumber text NOT NULL UNIQUE,
+    username text NOT NULL UNIQUE,
     mail text NOT NULL UNIQUE,
-    password text NOT NULL,
-    dateOfBirth date NOT NULL
+    password text NOT NULL
 )`;
 
 const sql_create_admin = `CREATE TABLE admin (
@@ -30,106 +26,36 @@ const sql_create_admin = `CREATE TABLE admin (
     FOREIGN KEY (id) REFERENCES users(id)
 )`;
 
-const sql_create_patient = `CREATE TABLE patient (
-    id INT NOT NULL,
-    doctorid INT NOT NULL,
-    nFailedAppointments INT NOT NULL,
-    notificationMethod text NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES users(id),
-    FOREIGN KEY (doctorid) REFERENCES doctor(id)
+const sql_create_trackings = `CREATE TABLE trackings (
+  id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  userid INT,
+  url text,
+  size text,
+  created_on TIMESTAMP WITHOUT TIME ZONE,
+  until TIMESTAMP WITHOUT TIME ZONE,
+  FOREIGN KEY (userid) REFERENCES users(id)
 )`;
 
-const sql_create_doctor = `CREATE TABLE doctor (
-    id INT NOT NULL,
-    teamid INT,
-    appointmentRule INT,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES users(id),
-    FOREIGN KEY (teamid) REFERENCES team(teamid)
-)`;
-
-const sql_create_nurse = `CREATE TABLE nurse (
-    id INT NOT NULL,
-    teamid INT,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES users(id),
-    FOREIGN KEY (teamid) REFERENCES team(teamid)
-)`;
-
-const sql_create_team = `CREATE TABLE team (
-    teamid INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL
-)`;
-
-const sql_create_appointment = `CREATE TABLE appointment (
-    id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    patientid INT,
-    doctorid INT,
-    nurseid INT,
-    time TIMESTAMP WITHOUT TIME ZONE,
-    duration INTERVAL, 
-    created_on TIMESTAMP WITHOUT TIME ZONE,
-    changes_from int,
-    type TEXT,
-    patient_came BOOLEAN,
-    
-    FOREIGN KEY (patientid) REFERENCES patient(id),
-    FOREIGN KEY (doctorid) REFERENCES doctor(id),
-    FOREIGN KEY (nurseid) REFERENCES nurse(id),
-    FOREIGN KEY (changes_from) REFERENCES appointment(id)
-)`; // TODO fix duration
-
-const sql_insert_users = `INSERT INTO users (name, surname, sex, phoneNumber, mail, password, dateOfBirth) VALUES 
-('Julijan', 'Zlataric', 'M', '0971012013', 'JulijanZlataric0@gmail.com', '11112013', '1938-7-8'),
-('Neo', 'Sneberger', 'M', '0911012014', 'NeoSneberger1@gmail.com', '11122014', '1929-10-25'),
-('Evona', 'Tudoric-Gemo', 'Z', '0911012015', 'EvonaTudoric-Gemo2@gmail.com', '11132015', '1935-2-20'),
-('Ljerko', 'Stipetic', 'M', '0941012016', 'LjerkoStipetic3@gmail.com', '11142016', '1978-7-14'),
+const sql_insert_users = `INSERT INTO users (username, mail, password) VALUES 
+('AaBb', 'aabb0@gmail.com', 'password1'),
+('CcDd', 'ccdd0@gmail.com', 'password2'),
+('EeFf', 'eeff@gmail.com', 'password3'),
+('GgHh', 'gghh@gmail.com', 'password4')
 `;
 
-const sql_insert_team = `INSERT INTO team (name) VALUES ('Prvi'), ('Drugi'), ('Treci')`;
-const sql_insert_admin = `INSERT INTO admin (id) VALUES (2), (3), (5)`;
-const sql_insert_doctor = `INSERT INTO doctor (id, teamid, appointmentRule) VALUES (7, NULL, NULL), (1, 1, NULL), (2, NULL, NULL), (3, 2, NULL), (4, 3, NULL), (5, NULL, NULL), (6, NULL, NULL), (10, NULL, NULL), (8, NULL, NULL), (9, NULL, NULL)`;
-const sql_insert_nurse = `INSERT INTO nurse (id, teamid) VALUES (8, NULL), (10, 1), (12, NULL), (14, 2), (16, 3)`;
-const sql_insert_patient = `INSERT INTO patient (nFailedAppointments, id, doctorid, notificationMethod) VALUES 
-    (0, 100, 7, 'email'), (0, 101, 7, 'email'), (0, 102, 7, 'email')`;
+const sql_insert_admin = `INSERT INTO admin (id) VALUES (4)`;
 
-const sql_insert_appointments = `INSERT INTO appointment (patientid, doctorid, nurseid, time, duration) VALUES 
-    (100, 7, NULL, '2015-01-10 00:51:14', '00:20:00'),
-    (101, 7, NULL, '2015-01-10 01:51:14', '00:20:00'),
-    (101, 9, NULL, '2015-01-10 01:51:14', '00:20:00'),
-    (101, 7, NULL, '2023-01-01 22:00:14', '02:20:00')
+const sql_insert_trackings = `INSERT INTO trackings (userid, url, size, created_on, until) VALUES 
+(1, 'https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686', 'M', '2023-02-16 00:51:14', '2023-02-23 00:51:14'),
+(2, 'https://www.zara.com/hr/hr/haljina-od-strukturirane-tkanine-p06560267.html?v1=207813905&utm_campaign=productMultiShare&utm_medium=mobile_sharing_Android&utm_source=red_social_movil', '9-12 mjeseci (80 cm)', '2023-02-15 10:00:00', '2023-03-05 10:00:00'),
+(3, 'https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686', 'L', '2023-02-25 01:51:14', '2023-03-11 01:51:14')
 `;
 
-let table_names = [
-  "users",
-  "admin",
-  "team",
-  "doctor",
-  "nurse",
-  "patient",
-  "appointment",
-];
+let table_names = ["users", "admin", "trackings"];
 
-let tables = [
-  sql_create_users,
-  sql_create_admin,
-  sql_create_team,
-  sql_create_doctor,
-  sql_create_nurse,
-  sql_create_patient,
-  sql_create_appointment,
-];
+let tables = [sql_create_users, sql_create_admin, sql_create_trackings];
 
-let table_data = [
-  sql_insert_users,
-  sql_insert_admin,
-  sql_insert_team,
-  sql_insert_doctor,
-  sql_insert_nurse,
-  sql_insert_patient,
-  sql_insert_appointments,
-];
+let table_data = [sql_insert_users, sql_insert_admin, sql_insert_trackings];
 
 let indexes = [];
 
