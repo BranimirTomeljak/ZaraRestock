@@ -79,6 +79,8 @@ async function runPeriodically(url, size) {
 
 //runPeriodically(url, size);
 
+/*const crawlers = require('crawler-user-agents');
+console.log(crawlers);*/
 var user_agents_list = [
   "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",

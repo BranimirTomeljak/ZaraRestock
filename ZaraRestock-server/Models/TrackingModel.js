@@ -36,7 +36,7 @@ class Tracking {
     let trackings = await Tracking.dbGetBy("trackings", property, id);
     let toreturn = [];
     for (let tracking of trackings) {
-      //tracking.time = add_hour(tracking.time)
+      tracking.created_on = add_hour(tracking.created_on);
       toreturn.push(tracking_factory(tracking));
     }
     return toreturn;
@@ -45,8 +45,8 @@ class Tracking {
   //je li tracking pohranjen u bazu podataka?
   async isSavedToDb() {
     if (this.id === undefined) return false;
-    let apps = await Tracking.fetchBy("id", this.id);
-    return apps.length == 1;
+    let trackings = await Tracking.fetchBy("id", this.id);
+    return trackings.length == 1;
   }
 
   // dohvat korisnika iz baze podataka na osnovu `what` i `table` odakle uzimamo
@@ -109,34 +109,21 @@ class Tracking {
     return a;
   }
 
-  /*async conflictsWithDb (){
-        //ako postoji tracking za isti link kod iste osobe
-        //negdi dodat da se provjerava ispravnost linka, jel zara i jel radi
-        let beg = "('" + this.time + "'::timestamp)"
-        let end = "(" + beg + "+ ('" + this.duration + "'::interval))"
-        let constraint_list = []
-        
-        if (this.doctorid !== undefined)
-            constraint_list.push("doctorid = " + this.doctorid)
-        if (this.nurseid !== undefined)
-            constraint_list.push("nurseid = " + this.nurseid)
-        if (this.patientid !== undefined)
-            constraint_list.push("patientid = " + this.patientid)
+  //ako postoji tracking za isti link kod iste osobe za istu veličinu
+  async conflictsWithDb() {
+    const sql =
+      `SELECT * from trackings WHERE userid = '` +
+      this.userid +
+      `' AND url = '` +
+      this.url +
+      `' AND size = '` +
+      this.size + `'`;
+    const result = await db.query(sql, []);
+    return result.length > 0;
+  }
 
-        let constraint_str = constraint_list.join(' or ')
-
-        const sql = `
-            SELECT * from appointment a
-            where not (( a.time <= ` + beg + ` and a.time + a.duration <= `+beg+`) or
-                       (`+beg+`<= a.time and `+ end + `<=a.time))
-                    and (` + constraint_str +`) 
-        `
-        const result = await db.query(sql, []);
-
-        if (this.id === undefined)
-            return result.length > 0
-        return result.length > 1
-    }*/
+  //provjerava se ispravnost linka, jel Zara i jel radi
+  async isRightFormat() {}
 
   async updateDb() {
     let f = Tracking._stringify_all;

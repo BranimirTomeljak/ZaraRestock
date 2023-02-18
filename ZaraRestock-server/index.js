@@ -20,10 +20,11 @@ const PORT = process.env.PORT || 3000;
 const initializePassport = require("./db/passportConfig");
 initializePassport(passport);
 
-var testRouter = require("./routes/test");
 var analyserRouter = require("./routes/analyser");
 var loginRouter = require("./routes/login");
 var registerRouter = require("./routes/register");
+var testRouter = require("./routes/test");
+var trackingRouter = require("./routes/tracking");
 
 app.use(cors());
 app.use(express.json());
@@ -42,10 +43,11 @@ app.use(passport.session()); // Store our variables to be persisted across the w
 app.use(flash());
 app.use(cookieParser());
 
-app.use("/api/test", testRouter);
 app.use("/api/analyser", analyserRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/register", registerRouter);
+app.use("/api/test", testRouter);
+app.use("/api/tracking", trackingRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
