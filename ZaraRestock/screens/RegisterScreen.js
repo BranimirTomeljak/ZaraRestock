@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
   const [username, setUserame] = useState("");
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,11 +21,17 @@ const RegisterScreen = () => {
       alert("Passwords do not match.");
       return;
     }
-
     axios
-      .post("http://localhost:3000/api/register", { username, mail, password })
-      .then((response) => {
-        console.log(response.data);
+      .post("http://192.168.0.128:3000/api/register", {
+        username,
+        mail,
+        password,
+      })
+      .then((res) => {
+        console.log(res.data);
+        AsyncStorage.setItem("userid", res.data.id.toString());
+        AsyncStorage.setItem("username", res.data.username.toString());
+        navigation.navigate("LoggedInMainMenu");
       })
       .catch((error) => {
         console.log(error);
@@ -30,18 +44,21 @@ const RegisterScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Username"
+        placeholderTextColor="#d3d3d3"
         value={username}
         onChangeText={setUserame}
       />
       <TextInput
         style={styles.input}
         placeholder="Mail"
+        placeholderTextColor="#d3d3d3"
         value={mail}
         onChangeText={setMail}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
+        placeholderTextColor="#d3d3d3"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -49,6 +66,7 @@ const RegisterScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
+        placeholderTextColor="#d3d3d3"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
@@ -56,6 +74,7 @@ const RegisterScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
+      <StatusBar style="dark" />
     </View>
   );
 };
@@ -63,6 +82,7 @@ const RegisterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -70,14 +90,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 24,
+    color: "#fff",
   },
   input: {
     width: "80%",
     height: 50,
-    backgroundColor: "#eee",
+    backgroundColor: "#333",
     marginVertical: 10,
     padding: 10,
     borderRadius: 5,
+    color: "#fff",
   },
   button: {
     width: "80%",

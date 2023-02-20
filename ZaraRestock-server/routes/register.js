@@ -62,8 +62,9 @@ const check_and_put = async (req, res, where) => {
 
   let person = new where(undefined, username, mail, hashedPassword);
   try {
-    console.log(person);
     await person.saveUserToDb();
+    person = await User.fetchBymail(mail);
+    console.log(person);
     res.json(person);
   } catch {
     console.log("problem with saving, going to rm");

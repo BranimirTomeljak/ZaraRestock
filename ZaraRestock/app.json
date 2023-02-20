@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ZaraRestock3",
-    "slug": "ZaraRestock3",
+    "name": "ZaraRestock",
+    "slug": "ZaraRestock",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

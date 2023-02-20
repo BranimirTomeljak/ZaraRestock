@@ -1,13 +1,19 @@
 import React from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, Button, StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 
 const LoggedInMainMenuScreen = ({ navigation }) => {
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Clear local storage
-    localStorage.clear();
-
-    const res = axios.get("http://localhost:3000/logout", {});
+    try {
+      await AsyncStorage.multiRemove(['userid', 'username']);
+    } catch (e) {
+      console.error(e);
+    }
+    
+    const res = axios.get("http://192.168.0.128:3000/api/logout", {});
 
     // Navigate back to the login screen
     navigation.navigate("LoggedOutMainMenu");
@@ -18,12 +24,12 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <Button
           title="New Tracking"
-          onPress={() => {}}
+          onPress={() => navigation.navigate("NewTracking")}
           style={styles.button}
         />
         <Button
           title="Old Trackings"
-          onPress={() => {}}
+          onPress={() => navigation.navigate("OldTrackings")}
           style={styles.button}
         />
       </View>
@@ -32,6 +38,7 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
         onPress={handleLogout}
         style={styles.logoutButton}
       />
+      <StatusBar style="dark" />
     </View>
   );
 };
@@ -39,29 +46,35 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#222222",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f5f5f5",
   },
   buttonContainer: {
-    flexDirection: "column",
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 50,
+    width: "100%",
+    padding: 20,
   },
   button: {
-    width: "80%",
-    marginBottom: 20,
+    width: "100%",
     borderRadius: 5,
-    color: "#c23616"
+    color: "#ffffff",
+    backgroundColor: "#c23616",
+    padding: 16,
+    marginBottom: 20,
   },
   logoutButton: {
     position: "absolute",
     top: 10,
     right: 10,
     borderRadius: 5,
-    color: "#c23616"
+    color: "#ffffff",
+    backgroundColor: "#c23616",
+    padding: 8,
   },
 });
+
 
 export default LoggedInMainMenuScreen;

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const LoggedOutMainMenuScreen = ({ navigation }) => {
   return (
@@ -19,6 +20,7 @@ const LoggedOutMainMenuScreen = ({ navigation }) => {
           <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
       </View>
+    <StatusBar style="dark" />
     </View>
   );
 };
@@ -28,12 +30,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#222222",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 24,
+    color: "#ffffff",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -49,10 +52,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonText: {
-    color: "#fff",
+    color: "#ffffff",
     fontSize: 18,
     fontWeight: "bold",
   },
 });
+
 
 export default LoggedOutMainMenuScreen;

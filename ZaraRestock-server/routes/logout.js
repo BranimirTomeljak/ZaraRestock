@@ -8,6 +8,7 @@ router.get("/", (req, res) => {
       return next(err);
     }
     req.flash("success_msg", "You have logged out");
+    console.log("You have logged out");
     res.clearCookie("id");
     res.json({ message: "You have logged out" });
   });

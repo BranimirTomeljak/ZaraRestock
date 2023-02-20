@@ -22,6 +22,7 @@ initializePassport(passport);
 
 var analyserRouter = require("./routes/analyser");
 var loginRouter = require("./routes/login");
+var logoutRouter = require("./routes/logout");
 var registerRouter = require("./routes/register");
 var testRouter = require("./routes/test");
 var trackingRouter = require("./routes/tracking");
@@ -45,6 +46,7 @@ app.use(cookieParser());
 
 app.use("/api/analyser", analyserRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/logout", logoutRouter);
 app.use("/api/register", registerRouter);
 app.use("/api/test", testRouter);
 app.use("/api/tracking", trackingRouter);

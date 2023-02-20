@@ -7,8 +7,8 @@ router.post(
   "/",
   passport.authenticate("local", { failureFlash: true }),
   async function (req, res) {
-    let { username } = req.body;
-    let user = await User.fetchByUsername(username);
+    let { mail } = req.body;
+    let user = await User.fetchBymail(mail);
 
     let id = user.id;
     if (req.session === undefined) req.session = {};
