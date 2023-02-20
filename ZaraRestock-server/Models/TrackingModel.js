@@ -11,7 +11,8 @@ const tracking_factory = (obj) => {
     obj.url,
     obj.size,
     obj.created_on,
-    obj.until
+    obj.until,
+    obj.success
   );
 };
 
@@ -22,13 +23,15 @@ class Tracking {
     url = undefined,
     size = undefined,
     created_on = undefined,
-    until = undefined
+    until = undefined,
+    success = undefined
   ) {
     this.id = id;
     (this.userid = userid), (this.url = url);
     this.size = size;
     this.created_on = created_on;
     this.until = until;
+    this.success = success;
   }
 
   // for example can fetch by userid
@@ -64,13 +67,14 @@ class Tracking {
     const f = this._stringify;
 
     const sql =
-      "INSERT INTO trackings (userid, size, url, created_on, until) VALUES (" +
+      "INSERT INTO trackings (userid, size, url, created_on, until, success) VALUES (" +
       [
         f(this.userid),
         f(this.size),
         f(this.url),
         f(this.created_on),
         f(this.until),
+        f(this.success),
       ].join(" , ") +
       ") RETURNING id;";
 
@@ -109,6 +113,74 @@ class Tracking {
     return a;
   }
 
+  //dobavi trackinge koji traju
+  static async getInProgress() {
+    var inProgress = await Tracking.dbGetBy(
+      "trackings",
+      "success",
+      "'in-progress'"
+    );
+    var inProgressTrackings = [];
+    for (const tracking of inProgress) {
+      inProgressTrackings.push(
+        new Tracking(
+          tracking.id,
+          tracking.userid,
+          tracking.url,
+          tracking.size,
+          tracking.created_on,
+          tracking.until,
+          tracking.success
+        )
+      );
+    }
+    return inProgressTrackings;
+  }
+
+  //dobavi gotove uspješne trackinge
+  static async getSuccessful() {
+    var successful = await Tracking.dbGetBy("trackings", "success", "'true'");
+    var successfulTrackings = [];
+    for (const tracking of successful) {
+      successfulTrackings.push(
+        new Tracking(
+          tracking.id,
+          tracking.userid,
+          tracking.url,
+          tracking.size,
+          tracking.created_on,
+          tracking.until,
+          tracking.success
+        )
+      );
+    }
+    return successfulTrackings;
+  }
+
+  //dobavi gotove neuspješne trackinge
+  static async getUnsuccessful() {
+    var unsuccessful = await Tracking.dbGetBy(
+      "trackings",
+      "success",
+      "'false'"
+    );
+    var unsuccessfulTrackings = [];
+    for (const tracking of unsuccessful) {
+      unsuccessfulTrackings.push(
+        new Tracking(
+          tracking.id,
+          tracking.userid,
+          tracking.url,
+          tracking.size,
+          tracking.created_on,
+          tracking.until,
+          tracking.success
+        )
+      );
+    }
+    return unsuccessfulTrackings;
+  }
+
   //ako postoji tracking za isti link kod iste osobe za istu veličinu
   async conflictsWithDb() {
     const sql =
@@ -117,7 +189,8 @@ class Tracking {
       `' AND url = '` +
       this.url +
       `' AND size = '` +
-      this.size + `'`;
+      this.size +
+      `'`;
     const result = await db.query(sql, []);
     return result.length > 0;
   }
@@ -126,23 +199,24 @@ class Tracking {
   async isRightFormat() {}
 
   async updateDb() {
-    let f = Tracking._stringify_all;
     console.log("updating...");
-    console.log(this.time);
     const sql =
       `UPDATE trackings 
-                    SET userid=` +
-      f(this.userid) +
-      `, size=` +
-      f(this.size) +
-      `, url=` +
-      f(this.url) +
-      ", created_on=" +
-      f(this.created_on) +
-      ", until=" +
-      f(this.until) +
-      ` WHERE id=` +
-      f(this.id);
+                    SET userid= '` +
+      this.userid +
+      `' , size= '` +
+      this.size +
+      `' , url= '` +
+      this.url +
+      "' , created_on= '" +
+      this.created_on.toISOString().slice(0, 19).replace("T", " ") +
+      "' , until= '" +
+      this.until.toISOString().slice(0, 19).replace("T", " ") +
+      "' , success= '" +
+      this.success +
+      `' WHERE id= '` +
+      this.id +
+      `'`;
     return await db.query(sql, []);
   }
 }

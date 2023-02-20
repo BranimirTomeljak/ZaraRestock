@@ -33,6 +33,7 @@ const sql_create_trackings = `CREATE TABLE trackings (
   size text,
   created_on TIMESTAMP WITHOUT TIME ZONE,
   until TIMESTAMP WITHOUT TIME ZONE,
+  success text,
   FOREIGN KEY (userid) REFERENCES users(id)
 )`;
 
@@ -45,10 +46,11 @@ const sql_insert_users = `INSERT INTO users (username, mail, password) VALUES
 
 const sql_insert_admin = `INSERT INTO admin (id) VALUES (4)`;
 
-const sql_insert_trackings = `INSERT INTO trackings (userid, url, size, created_on, until) VALUES 
-(1, 'https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686', 'M', '2023-02-16 00:51:14', '2023-02-23 00:51:14'),
-(2, 'https://www.zara.com/hr/hr/haljina-od-strukturirane-tkanine-p06560267.html?v1=207813905&utm_campaign=productMultiShare&utm_medium=mobile_sharing_Android&utm_source=red_social_movil', '9-12 mjeseci (80 cm)', '2023-02-15 10:00:00', '2023-03-05 10:00:00'),
-(3, 'https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686', 'L', '2023-02-25 01:51:14', '2023-03-11 01:51:14')
+const sql_insert_trackings = `INSERT INTO trackings (userid, url, size, created_on, until, success) VALUES 
+(1, 'https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686', 'M', '2023-02-16 00:51:14', '2023-02-23 00:51:14', 'in-progress'),
+(2, 'https://www.zara.com/hr/hr/haljina-od-strukturirane-tkanine-p06560267.html?v1=207813905&utm_campaign=productMultiShare&utm_medium=mobile_sharing_Android&utm_source=red_social_movil', '9-12 mjeseci (80 cm)', '2023-02-15 10:00:00', '2023-03-05 10:00:00', 'false'),
+(3, 'https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686', 'L', '2023-02-25 01:51:14', '2023-03-11 01:51:14', 'true'),
+(1, 'https://www.zara.com/hr/hr/haljina-od-strukturirane-tkanine-p06560267.html?v1=207813905&utm_campaign=productMultiShare&utm_medium=mobile_sharing_Android&utm_source=red_social_movil', 'M', '2023-02-16 00:51:14', '2023-02-23 00:51:14', 'in-progress')
 `;
 
 let table_names = ["users", "admin", "trackings"];

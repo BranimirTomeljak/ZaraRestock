@@ -35,7 +35,8 @@ const tracking_factory = (userid, url, size, until) => {
     url,
     size,
     curr_date_factory().toISOString().slice(0, 19).replace("T", " "),
-    until
+    until,
+    'in-progress'
   );
 };
 

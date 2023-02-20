@@ -1,7 +1,10 @@
 var express = require("express");
+//const db = require("../db");
 const puppeteer = require("puppeteer");
 const xpath = require("xpath");
 const { DOMParser } = require("xmldom");
+const Tracking = require("../Models/TrackingModel");
+const notification = require("../Models/NotificationModel");
 var router = express.Router();
 
 router.post("/sizes", async function (req, res) {
@@ -16,11 +19,65 @@ router.post("/check", async function (req, res) {
     "https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686",
     "L"
   );
-  if(available)
-    res.sendStatus(200);
-  else
-    res.sendStatus(404);
+  if (available) res.sendStatus(200);
+  else res.sendStatus(404);
 });
+
+//pribacit ovo ispod u AnalyserModel
+
+async function getSizes(url) {
+  //napravit univerzalno dio koda koji se ponavlja da se smanji redundancija!
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setCookie({
+    name: "cookieName",
+    value: "cookieValue",
+    domain: "example.com",
+    path: "/",
+    expires: Date.now() / 1000 + 10, // Expires in 10 seconds
+  });
+  await page.setUserAgent(
+    user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
+  );
+  try {
+    await page.goto(url);
+    await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
+    await page.evaluate(() => {
+      const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
+      if (cookiePrompt) {
+        cookiePrompt.remove();
+      }
+    });
+    await page.waitForSelector(".product-size-info__main-label", {
+      timeout: 30000,
+    });
+
+    const html = await page.content();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const sizes = xpath.select(
+      './/*[contains(@class, "product-size-info__main-label")]',
+      doc
+    );
+    const sizesList = [];
+    for (size of sizes) {
+      sizesList.push(size.textContent);
+    }
+
+    if (!sizes.length) {
+      console.error("Can't get sizes.");
+      return false;
+    }
+
+    return sizesList;
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return false;
+  } finally {
+    await browser.close();
+  }
+}
 
 async function checkSizeAvailability(url, size) {
   const browser = await puppeteer.launch();
@@ -78,74 +135,32 @@ async function checkSizeAvailability(url, size) {
   }
 }
 
-async function runPeriodically(url, size) {
-  setInterval(async () => {
-    const result = await checkSizeAvailability(url, size);
+async function runPeriodically() {
+  //setInterval(async () => {
+  var inProgress = await Tracking.getInProgress();
+  for (var tracking of inProgress) {
+    const result = await checkSizeAvailability(tracking.url, tracking.size);
+    console.log(`Result of checking id ${tracking.id}: ${result}`);
+
     if (result) {
-      //sendMail(mail);
+      //notification.sendEmail("found", tracking);
+      tracking.success = "true";
+      await tracking.updateDb();
     }
-    console.log(`Result of checking ${url}: ${result}`);
-  }, Math.random() * (60000 - 30000) + 30000); // random[30, 60] seconds
-}
-
-//runPeriodically(url, size);
-
-async function getSizes(url) {
-  //napravit univerzalno dio koda koji se ponavlja da se smanji redundancija!
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.setCookie({
-    name: "cookieName",
-    value: "cookieValue",
-    domain: "example.com",
-    path: "/",
-    expires: Date.now() / 1000 + 10, // Expires in 10 seconds
-  });
-  await page.setUserAgent(
-    user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
-  );
-  try {
-    await page.goto(url);
-    await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
-    await page.evaluate(() => {
-      const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
-      if (cookiePrompt) {
-        cookiePrompt.remove();
-      }
-    });
-    await page.waitForSelector(".product-size-info__main-label", {
-      timeout: 30000,
-    });
-
-    const html = await page.content();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const sizes = xpath.select(
-      './/*[contains(@class, "product-size-info__main-label")]',
-      doc
-    );
-    const sizesList = [];
-    for (size of sizes) {
-      sizesList.push(size.textContent);
+    else if (tracking.until < new Date()){
+      tracking.success = "false";
+      await tracking.updateDb();
     }
 
-    if (!sizes.length) {
-      console.error("Can't get sizes.");
-      return false;
-    }
-
-    return sizesList;
-  } catch (error) {
-    console.error(`An error occurred: ${error}`);
-    return false;
-  } finally {
-    await browser.close();
+    //await new Promise((resolve) => setTimeout(resolve, 1000));  //svaka iteracija se vrti 1 sekundu -> namistit za nas slucaj(random takoder)
   }
+  //}, Math.floor(Math.random() * 30000) + 60000); // random[60, 90] seconds
 }
 
-/*const crawlers = require('crawler-user-agents');
-console.log(crawlers);*/
+//runPeriodically();
+
+//const crawlers = require('crawler-user-agents');
+//console.log(crawlers);
 var user_agents_list = [
   "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
