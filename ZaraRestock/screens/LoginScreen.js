@@ -11,21 +11,21 @@ import {
 import axios from "axios";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
+  const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/login", {
-        email,
+      const res = await axios.post("http://localhost:3000/login", {
+        mail,
         password,
       });
 
       // If the login was successful, store the user information in local storage
-      if (response.status === 200) {
-        const { id, name } = response.data.user;
+      if (res.status === 200) {
+        const { id, username } = res.data.user;
         localStorage.setItem("userId", id);
-        localStorage.setItem("userName", name);
+        localStorage.setItem("userUsername", username);
       }
 
       // Redirect the user to the main page
@@ -41,9 +41,9 @@ const LoginScreen = () => {
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={(value) => setEmail(value)}
+        placeholder="Mail"
+        value={mail}
+        onChangeText={(value) => setMail(value)}
       />
       <TextInput
         style={styles.input}

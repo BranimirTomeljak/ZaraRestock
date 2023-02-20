@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-nativ
 import axios from "axios";
 
 const RegisterScreen = () => {
-  const [name, setName] = useState("");
+  const [username, setUserame] = useState("");
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,7 +15,7 @@ const RegisterScreen = () => {
     }
 
     axios
-      .post("http://localhost:3000/api/register", { name, mail, password })
+      .post("http://localhost:3000/api/register", { username, mail, password })
       .then((response) => {
         console.log(response.data);
       })
@@ -29,9 +29,9 @@ const RegisterScreen = () => {
       <Text style={styles.header}>Register</Text>
       <TextInput
         style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUserame}
       />
       <TextInput
         style={styles.input}
