@@ -1,19 +1,21 @@
 const nodemailer = require("nodemailer");
 //const db = require("../db");
-//const { User } = require("../models/UserModel");
+const { User } = require("../models/UserModel");
 
 async function sendEmail(purpose, tracking) {
+  const user = await User.fetchById(tracking.userid);
+  console.log(user);
   const transporter = nodemailer.createTransport({
     service: "hotmail",
     auth: {
       user: "zararestock@outlook.com",
-      pass: "zararestock1950",
+      pass: "alezaraale1950",
     },
   });
 
   var options = {
     from: "zararestock@outlook.com",
-    to: tracking.mail,
+    to: user.mail,
     subject: getPurposeSubject(purpose),
     html: await getPurposeMessage(purpose, tracking),
   };

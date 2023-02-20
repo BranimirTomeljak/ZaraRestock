@@ -143,11 +143,12 @@ async function runPeriodically() {
     console.log(`Result of checking id ${tracking.id}: ${result}`);
 
     if (result) {
-      //notification.sendEmail("found", tracking);
+      notification.sendEmail("found", tracking);
       tracking.success = "true";
       await tracking.updateDb();
     }
     else if (tracking.until < new Date()){
+      notification.sendEmail("timeout", tracking);
       tracking.success = "false";
       await tracking.updateDb();
     }
