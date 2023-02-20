@@ -4,12 +4,22 @@ const xpath = require("xpath");
 const { DOMParser } = require("xmldom");
 var router = express.Router();
 
-router.post("/", async function (req, res) {
-  checkSizeAvailability(
+router.post("/sizes", async function (req, res) {
+  var sizes = await getSizes(
+    "https://www.zara.com/hr/hr/haljina-od-strukturirane-tkanine-p06560267.html?v1=207813905&utm_campaign=productMultiShare&utm_medium=mobile_sharing_Android&utm_source=red_social_movil"
+  );
+  res.json(sizes);
+});
+
+router.post("/check", async function (req, res) {
+  available = await checkSizeAvailability(
     "https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686",
     "L"
   );
-  res.status(200);
+  if(available)
+    res.sendStatus(200);
+  else
+    res.sendStatus(404);
 });
 
 async function checkSizeAvailability(url, size) {
@@ -27,7 +37,7 @@ async function checkSizeAvailability(url, size) {
   );
   try {
     await page.goto(url);
-    await page.waitForSelector("#onetrust-consent-sdk", { timeout: 30000 });
+    await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
     await page.evaluate(() => {
       const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
       if (cookiePrompt) {
@@ -41,6 +51,7 @@ async function checkSizeAvailability(url, size) {
     const html = await page.content();
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
+
     const elements = xpath.select('//*[@data-qa-action="size-in-stock"]', doc);
     if (!elements.length) {
       console.error(`Nema, tugy plaky`);
@@ -78,6 +89,60 @@ async function runPeriodically(url, size) {
 }
 
 //runPeriodically(url, size);
+
+async function getSizes(url) {
+  //napravit univerzalno dio koda koji se ponavlja da se smanji redundancija!
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setCookie({
+    name: "cookieName",
+    value: "cookieValue",
+    domain: "example.com",
+    path: "/",
+    expires: Date.now() / 1000 + 10, // Expires in 10 seconds
+  });
+  await page.setUserAgent(
+    user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
+  );
+  try {
+    await page.goto(url);
+    await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
+    await page.evaluate(() => {
+      const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
+      if (cookiePrompt) {
+        cookiePrompt.remove();
+      }
+    });
+    await page.waitForSelector(".product-size-info__main-label", {
+      timeout: 30000,
+    });
+
+    const html = await page.content();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const sizes = xpath.select(
+      './/*[contains(@class, "product-size-info__main-label")]',
+      doc
+    );
+    const sizesList = [];
+    for (size of sizes) {
+      sizesList.push(size.textContent);
+    }
+
+    if (!sizes.length) {
+      console.error("Can't get sizes.");
+      return false;
+    }
+
+    return sizesList;
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+    return false;
+  } finally {
+    await browser.close();
+  }
+}
 
 /*const crawlers = require('crawler-user-agents');
 console.log(crawlers);*/
