@@ -1,19 +1,20 @@
 import React from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, Button, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
+const AsyncStorage = require("../models/AsyncStorageModel");
 
 const LoggedInMainMenuScreen = ({ navigation }) => {
   const handleLogout = async () => {
     // Clear local storage
     try {
-      await AsyncStorage.multiRemove(['userid', 'username']);
-    } catch (e) {
-      console.error(e);
+      await AsyncStorage.removeValue('userid');
+      await AsyncStorage.removeValue('username');
+    } catch (error) {
+      console.error(error);
     }
     
-    const res = axios.get("http://192.168.0.128:3000/api/logout", {});
+    const res = await axios.get("http://192.168.0.128:3000/api/logout", {});
 
     // Navigate back to the login screen
     navigation.navigate("LoggedOutMainMenu");
@@ -24,7 +25,7 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <Button
           title="New Tracking"
-          onPress={() => navigation.navigate("NewTracking")}
+          //onPress={() => navigation.navigate("NewTracking")}
           style={styles.button}
         />
         <Button

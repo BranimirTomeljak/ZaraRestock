@@ -1,0 +1,26 @@
+Mogućnosti:
+	- šalje mail kad je proizvod ponovno dostupan
+	- opcionalno: šalje mail kada se cijena proizvoda smanji
+
+Glavni izbornik:
+	- NovoPraćenje i PregledTrenutnihPraćenja
+	- u PregledTrenutnihPraćenja možemo otkazati praćenje
+	- opcionalno: povijest praćenja (uspješna i neuspješna)
+
+Generalni UseCase za NovoPraćenje:
+	1) odabir PonovnoDostupan/SmanjenaCijena
+	2) unos linka proizvoda
+	3) aplikacija scrapea stranicu, vidi ponuđene veličine i ispiše ih korisniku (razlikovati dostupne od nedostupnih)
+	4) korisnik odabire 1 ili više veličinu
+	5) korisnik odabire period kada želi da ga se obavještava o proizvodu (1 tjedan, 1 mjesec, 1 godina, ...)
+	6) korisnik unosi mail na koji želi da mu se obavijest pošalje
+	7) gotovo -> ispis potvrde i povratak na glavni izbornik
+
+Izvođenje praćenja:
+	- svakih 30 sekundi uzmu se svi linkovi iz baze i stranica se scrapea i provjerava je li proizvod dostupan
+	- alternativno: glavno da se svako 30 sekundi svi linkovi provjere, ali se tajming provjere za svaki link dinamično mijenja ovisno o broju praćenja (za optimizaciju i smanjenje vjerojatnosti overloada)
+		-> npr. ako imamo 60 praćenja, svake sekunde se provjere 2 linka
+	- ako je proizvod nađen, šalje se mail korisniku i link se uklanja iz baze
+		-> eventualno šaljemo korisniku prompt je li našao ili ne u slučaju da želi zadržati praćenje i ne unositi opet isti link (npr. nije vidio obavijest i nije stigao kupiti na vrijeme) 
+	
+	- opcionalno: provjeravati u nepravilnim (random) trenutcima u slučaju da Zara primjeti čudan promet s iste IP adrese

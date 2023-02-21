@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   Text,
@@ -11,22 +10,23 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
+const AsyncStorage = require("../models/AsyncStorageModel");
 
 const LoginScreen = ({ navigation }) => {
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    axios
+    await axios
       .post("http://192.168.0.128:3000/api/login", {
         mail,
         password,
       })
-      .then((res) => {
+      .then(async (res) => {
         if (res.status === 200) {
           const { id, username } = res.data;
-          AsyncStorage.setItem("userid", id.toString());
-          AsyncStorage.setItem("username", username.toString());
+          await AsyncStorage.storeData("userid", id.toString());
+          await AsyncStorage.storeData("username", username.toString());
           navigation.navigate("LoggedInMainMenu");
         }
       })

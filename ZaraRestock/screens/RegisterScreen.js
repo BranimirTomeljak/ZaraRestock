@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   TextInput,
@@ -9,6 +8,7 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
+const AsyncStorage = require("../models/AsyncStorageModel");
 
 const RegisterScreen = ({ navigation }) => {
   const [username, setUserame] = useState("");
@@ -16,21 +16,21 @@ const RegisterScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
-    axios
+    await axios
       .post("http://192.168.0.128:3000/api/register", {
         username,
         mail,
         password,
       })
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.data);
-        AsyncStorage.setItem("userid", res.data.id.toString());
-        AsyncStorage.setItem("username", res.data.username.toString());
+        await AsyncStorage.storeData("userid", res.data.id.toString());
+        await AsyncStorage.storeData("username", res.data.username.toString());
         navigation.navigate("LoggedInMainMenu");
       })
       .catch((error) => {

@@ -113,6 +113,30 @@ class Tracking {
     return a;
   }
 
+  //dobavi sve trackinge jednog user id-a
+  static async getAllByUserId(userid) {
+    var all = await Tracking.dbGetBy(
+      "trackings",
+      "userid",
+      "'"+userid+"'"
+    );
+    var allTrackings = [];
+    for (const tracking of all) {
+      allTrackings.push(
+        new Tracking(
+          tracking.id,
+          tracking.userid,
+          tracking.url,
+          tracking.size,
+          tracking.created_on,
+          tracking.until,
+          tracking.success
+        )
+      );
+    }
+    return allTrackings;
+  }
+  
   //dobavi trackinge koji traju
   static async getInProgress() {
     var inProgress = await Tracking.dbGetBy(

@@ -1,23 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoggedOutMainMenuScreen from "./screens/LoggedOutMainMenuScreen";
 import LoggedInMainMenuScreen from "./screens/LoggedInMainMenuScreen";
 import NewTrackingScreen from "./screens/NewTrackingScreen";
 import OldTrackingsScreen from "./screens/OldTrackingsScreen";
-
+const AsyncStorage = require("./models/AsyncStorageModel");
 const Stack = createStackNavigator();
 
 const App = () => {
-  const [userId, setUserId] = React.useState(null);
-  React.useEffect(() => {
-    getUserId().then((userId) => {
+  const [userId, setUserId] = useState(null);
+  const [fetchComplete, setFetchComplete] = useState(false);
+
+  useEffect(() => {
+    async function fetchUserId() {
+      const userId = await AsyncStorage.getData("userid");
       setUserId(userId);
-    });
+      setFetchComplete(true);
+    }
+    fetchUserId();
   }, []);
+
+  if (!fetchComplete) return null;
+
   const initialRouteName = userId ? "LoggedInMainMenu" : "LoggedOutMainMenu";
 
   return (
@@ -57,16 +64,9 @@ const App = () => {
     </NavigationContainer>
   );
 };
-export default App;
 
-const getUserId = async () => {
-  try {
-    const userId = await AsyncStorage.getItem('userid');
-    return userId;
-  } catch (e) {
-    console.error(e);
-  }
-};
+
+export default App;
 
 const headerOptions = {
   title: "ZaraRestock",
@@ -78,5 +78,5 @@ const headerOptions = {
     fontWeight: "bold",
   },
   headerTitleAlign: "center",
-  animationEnabled: false
+  animationEnabled: false,
 };
