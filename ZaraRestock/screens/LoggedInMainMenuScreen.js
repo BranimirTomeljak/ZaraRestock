@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Button, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 const AsyncStorage = require("../models/AsyncStorageModel");
@@ -22,23 +22,27 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Main Menu</Text>
       <View style={styles.buttonContainer}>
-        <Button
-          title="New Tracking"
-          //onPress={() => navigation.navigate("NewTracking")}
+        <TouchableOpacity
           style={styles.button}
-        />
-        <Button
-          title="Old Trackings"
-          onPress={() => navigation.navigate("OldTrackings")}
+          onPress={() => navigation.navigate("NewTracking")}
+        >
+          <Text style={styles.buttonText}>New Tracking</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.button}
-        />
+          onPress={() => navigation.navigate("MyTrackings")}
+        >
+          <Text style={styles.buttonText}>My Trackings</Text>
+        </TouchableOpacity>
       </View>
-      <Button
-        title="Logout"
-        onPress={handleLogout}
+      <TouchableOpacity
         style={styles.logoutButton}
-      />
+        onPress={handleLogout}
+      >
+        <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
       <StatusBar style="dark" />
     </View>
   );
@@ -47,34 +51,48 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#222222",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "#222222",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 24,
+    color: "#ffffff",
   },
   buttonContainer: {
-    flex: 1,
-    alignItems: "center",
+    flexDirection: "column",
     justifyContent: "center",
-    width: "100%",
-    padding: 20,
+    alignItems: "center",
+    width: "80%",
   },
   button: {
     width: "100%",
-    borderRadius: 5,
-    color: "#ffffff",
+    height: 50,
     backgroundColor: "#c23616",
-    padding: 16,
-    marginBottom: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   logoutButton: {
     position: "absolute",
     top: 10,
     right: 10,
+    width: "30%",
+    height: 40,
+    backgroundColor: "#c26d16",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 5,
-    color: "#ffffff",
-    backgroundColor: "#c23616",
-    padding: 8,
   },
 });
+
 
 export default LoggedInMainMenuScreen;

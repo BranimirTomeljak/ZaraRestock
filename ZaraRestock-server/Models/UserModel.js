@@ -1,10 +1,5 @@
 const db = require("../db");
 
-function _stringify(a) {
-  if (a === undefined) return "NULL";
-  return a;
-}
-
 class User {
   //konstruktor korisnika
   constructor(

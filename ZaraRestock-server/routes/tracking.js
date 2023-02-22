@@ -13,10 +13,8 @@ const curr_date_factory = () => {
 
 router.get("/", async function (req, res) {
   let { userid } = req.query;
-  console.log(userid);
   var trackings = await Tracking.getAllByUserId(userid);
   res.json(trackings);
-  //res.json(1);
 });
 
 router.post("/create", async function (req, res) {

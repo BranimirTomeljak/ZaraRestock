@@ -6,7 +6,7 @@ import RegisterScreen from "./screens/RegisterScreen";
 import LoggedOutMainMenuScreen from "./screens/LoggedOutMainMenuScreen";
 import LoggedInMainMenuScreen from "./screens/LoggedInMainMenuScreen";
 import NewTrackingScreen from "./screens/NewTrackingScreen";
-import OldTrackingsScreen from "./screens/OldTrackingsScreen";
+import MyTrackingsScreen from "./screens/MyTrackingsScreen";
 const AsyncStorage = require("./models/AsyncStorageModel");
 const Stack = createStackNavigator();
 
@@ -56,8 +56,8 @@ const App = () => {
           options={headerOptions}
         />
         <Stack.Screen
-          name="OldTrackings"
-          component={OldTrackingsScreen}
+          name="MyTrackings"
+          component={MyTrackingsScreen}
           options={headerOptions}
         />
       </Stack.Navigator>

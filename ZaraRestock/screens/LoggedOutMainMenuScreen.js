@@ -39,17 +39,19 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
     width: "80%",
   },
   button: {
-    width: "45%",
+    width: "100%",
     height: 50,
     backgroundColor: "#c23616",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
+    marginBottom: 10,
   },
   buttonText: {
     color: "#ffffff",

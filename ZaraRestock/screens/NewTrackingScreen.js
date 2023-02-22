@@ -1,61 +1,132 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
-  Alert,
-  Button,
+  Text,
   StyleSheet,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 const AsyncStorage = require("../models/AsyncStorageModel");
 
-const LoginScreen = ({ navigation }) => {
-  const [mail, setMail] = useState("");
-  const [password, setPassword] = useState("");
+const NewTrackingScreen = ({ navigation }) => {
+  const [url, setUrl] = useState("");
+  const [size, setSize] = useState("");
+  const [period, setPeriod] = useState("");
+  const [selectedPeriods, setSelectedPeriods] = useState([]);
 
-  const handleLogin = async () => {
+  const handleAddTracking = async () => {
+    if (!url || !size.length === 0 || selectedPeriods.length === 0) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
     await axios
-      .post("http://192.168.0.128:3000/api/login", {
-        mail,
-        password,
+      .post("http://192.168.0.128:3000/api/tracking", {
+        url,
+        size,
+        period: selectedPeriods,
       })
-      .then(async (res) => {
-        if (res.status === 200) {
-          const { id, username } = res.data;
-          await AsyncStorage.storeData("userid", id.toString());
-          await AsyncStorage.storeData("username", username.toString());
-          navigation.navigate("LoggedInMainMenu");
-        }
+      .then((res) => {
+        console.log(res.data);
+        navigation.navigate("LoggedInMainMenu");
       })
       .catch((error) => {
         console.log(error);
-        Alert.alert("Error", "Invalid credentials. Please try again.");
       });
   };
 
+  const toggleSize = (selectedSize) => {
+    if (size.includes(selectedSize)) {
+      setSize(size.filter((s) => s !== selectedSize));
+    } else {
+      setSize([...size, selectedSize]);
+    }
+  };
+
+  const togglePeriodSelection = (period) => {
+    setSelectedPeriods((selected) =>
+      selected.includes(period)
+        ? selected.filter((p) => p !== period)
+        : [...selected, period]
+    );
+  };
+
+  const isPeriodSelected = (period) => selectedPeriods.includes(period);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.header}>Add New Tracking</Text>
       <TextInput
         style={styles.input}
-        placeholder="Mail"
+        placeholder="URL"
         placeholderTextColor="#d3d3d3"
-        value={mail}
-        onChangeText={(value) => setMail(value)}
+        value={url}
+        onChangeText={setUrl}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#d3d3d3"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={(value) => setPassword(value)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+      <Text style={styles.label}>Size:</Text>
+      <View style={styles.radioContainer}>
+        <TouchableOpacity
+          style={size.includes("S") ? styles.radioSelected : styles.radio}
+          onPress={() => toggleSize("S")}
+        >
+          <Text style={styles.radioText}>S</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={size.includes("M") ? styles.radioSelected : styles.radio}
+          onPress={() => toggleSize("M")}
+        >
+          <Text style={styles.radioText}>M</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={size.includes("L") ? styles.radioSelected : styles.radio}
+          onPress={() => toggleSize("L")}
+        >
+          <Text style={styles.radioText}>L</Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.label}>Period:</Text>
+      <View style={styles.radioContainer}>
+        <TouchableOpacity
+          style={[
+            styles.radio,
+            isPeriodSelected("1 week") && styles.radioSelected,
+          ]}
+          onPress={() => togglePeriodSelection("1 week")}
+        >
+          <Text style={styles.radioText}>1 week</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.radio,
+            isPeriodSelected("1 month") && styles.radioSelected,
+          ]}
+          onPress={() => togglePeriodSelection("1 month")}
+        >
+          <Text style={styles.radioText}>1 month</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.radio,
+            isPeriodSelected("6 months") && styles.radioSelected,
+          ]}
+          onPress={() => togglePeriodSelection("6 months")}
+        >
+          <Text style={styles.radioText}>6 months</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.radio,
+            isPeriodSelected("1 year") && styles.radioSelected,
+          ]}
+          onPress={() => togglePeriodSelection("1 year")}
+        >
+          <Text style={styles.radioText}>1 year</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.button} onPress={handleAddTracking}>
+        <Text style={styles.buttonText}>Add Tracking</Text>
       </TouchableOpacity>
       <StatusBar style="dark" />
     </View>
@@ -65,36 +136,66 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#222222",
+    padding: 20,
   },
-  title: {
+  header: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 24,
-    color: "#ffffff",
+    marginBottom: 20,
   },
   input: {
-    width: "80%",
-    padding: 16,
+    width: "100%",
+    padding: 10,
     borderWidth: 1,
-    borderColor: "#ffffff",
-    borderRadius: 8,
-    marginBottom: 16,
-    color: "#ffffff",
-    placeHolderTextColor: "#bbb",
+    borderColor: "#ddd",
+    borderRadius: 5,
+    marginBottom: 10,
+    fontSize: 16,
+    color: "#444",
+  },
+  label: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  radioContainer: {
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  radio: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+  radioSelected: {
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+  radioText: {
+    fontSize: 16,
+    color: "#555",
   },
   button: {
-    backgroundColor: "#c23616",
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: "#3f51b5",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
   },
   buttonText: {
-    color: "#ffffff",
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
 });
 
-export default LoginScreen;
+export default NewTrackingScreen;
