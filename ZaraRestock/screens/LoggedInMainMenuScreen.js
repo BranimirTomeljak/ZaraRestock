@@ -8,12 +8,12 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
   const handleLogout = async () => {
     // Clear local storage
     try {
-      await AsyncStorage.removeValue('userid');
-      await AsyncStorage.removeValue('username');
+      await AsyncStorage.removeValue("userid");
+      await AsyncStorage.removeValue("username");
     } catch (error) {
       console.error(error);
     }
-    
+
     const res = await axios.get("http://192.168.0.128:3000/api/logout", {});
 
     // Navigate back to the login screen
@@ -76,6 +76,5 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
-
 
 export default LoggedInMainMenuScreen;
