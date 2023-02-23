@@ -10,7 +10,7 @@ async function getSizes(url) {
     value: "cookieValue",
     domain: "example.com",
     path: "/",
-    expires: Date.now() / 1000 + 10, // Expires in 10 seconds
+    expires: Date.now() / 1000 + 2, // Expires in 2 seconds
   });
   await page.setUserAgent(
     user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
@@ -63,7 +63,7 @@ async function checkSizeAvailability(url, size) {
     value: "cookieValue",
     domain: "example.com",
     path: "/",
-    expires: Date.now() / 1000 + 10, // Expires in 10 seconds
+    expires: Date.now() / 1000 + 2, // Expires in 2 seconds
   });
   await page.setUserAgent(
     user_agents_list[Math.floor(Math.random() * user_agents_list.length)]

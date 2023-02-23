@@ -6,17 +6,19 @@ const Analyser = require("../models/AnalyserModel");
 var router = express.Router();
 
 router.post("/sizes", async function (req, res) {
-  var sizes = await Analyser.getSizes(
+  /*var sizes = await Analyser.getSizes(
     "https://www.zara.com/hr/hr/haljina-od-strukturirane-tkanine-p06560267.html?v1=207813905&utm_campaign=productMultiShare&utm_medium=mobile_sharing_Android&utm_source=red_social_movil"
-  );
+  );*/
+  var sizes = await Analyser.getSizes(req.body.url);
   res.json(sizes);
 });
 
 router.post("/check", async function (req, res) {
-  available = await Analyser.checkSizeAvailability(
+  /*available = await Analyser.checkSizeAvailability(
     "https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686",
     "L"
-  );
+  );*/
+  available = await Analyser.checkSizeAvailability(req.body.url, req.body.size);
   if (available) res.sendStatus(200);
   else res.sendStatus(404);
 });
