@@ -18,19 +18,31 @@ router.get("/", async function (req, res) {
 });
 
 router.post("/create", async function (req, res) {
-  let { userid, url, size, until } = req.body;
+  let { userid, url, sizes, until } = req.body;
+  const now = (new Date());
+  if (until == "1 week")
+    until = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  else if (until == "1 month")
+    until = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  else if (until == "6 months")
+    until = new Date(now.getFullYear(), now.getMonth() + 6, now.getDate());
+  else if (until == "1 year")
+    until = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+  else until = undefined;
 
-  let tracking = tracking_factory(userid, url, size, until);
+  for (let size of sizes) {
+    let tracking = tracking_factory(userid, url, size, until);
 
-  if (await tracking.conflictsWithDb())
-    res.status(500).send("Same tracking details exist.");
-  else if (await tracking.isSavedToDb())
-    res.status(500).send("Tracking exists.");
-  else if (await tracking.isRightFormat())
-    res.status(500).send("Not right format Zara url.");
-  else {
-    await save_to_db(tracking);
-    res.json(tracking);
+    if (await tracking.conflictsWithDb())
+      res.status(500).send("Same tracking details exist.");
+    else if (await tracking.isSavedToDb())
+      res.status(500).send("Tracking exists.");
+    else if (await tracking.isRightFormat())
+      res.status(500).send("Not right format Zara URL");
+    else {
+      await save_to_db(tracking);
+      res.json(tracking);
+    }
   }
 });
 
@@ -41,8 +53,8 @@ const tracking_factory = (userid, url, size, until) => {
     url,
     size,
     curr_date_factory().toISOString().slice(0, 19).replace("T", " "),
-    until,
-    'in-progress'
+    until.toISOString().slice(0, 19).replace("T", " "),
+    "in-progress"
   );
 };
 

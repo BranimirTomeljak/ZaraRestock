@@ -19,4 +19,16 @@ router.post(
   }
 );
 
+router.get("/startup", async function (req, res) {
+  let { userid } = req.query;
+  let user = await User.fetchById(userid);
+  console.log(user);
+  if (req.session === undefined) req.session = {};
+  if (await user.isUser()) req.session.user = user;
+  else if (await user.isAdmin()) req.session.user = await Admin.getById(userid);
+  req.session.save();
+  console.log("Logged in backend");
+  res.json(req.session.user);
+});
+
 module.exports = router;

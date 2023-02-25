@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -17,6 +17,17 @@ const NewTrackingScreen = ({ navigation }) => {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [fetchComplete, setFetchComplete] = useState(false);
+
+  useEffect(() => {
+    async function fetchUserId() {
+      const userId = await AsyncStorage.getData("userid");
+      setUserId(userId);
+      setFetchComplete(true);
+    }
+    fetchUserId();
+  }, []);
 
   const handleAddTracking = async () => {
     if (selectedSizes.length === 0 || !selectedPeriod) {
@@ -24,26 +35,39 @@ const NewTrackingScreen = ({ navigation }) => {
       return;
     }
 
-    await axios
-      .post("http://192.168.0.128:3000/api/tracking", {
-        url,
-        size: selectedSizes,
-        period: selectedPeriod,
-      })
-      .then((res) => {
-        console.log(res.data);
-        navigation.navigate("LoggedInMainMenu");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (!fetchComplete) return null;
+
+    async function createTracking() {
+      await axios
+        .post("http://192.168.0.128:3000/api/tracking/create", {
+          userid: userId,
+          url,
+          sizes: selectedSizes,
+          until: selectedPeriod,
+        })
+        .then((res) => {
+          console.log(res.data);
+          navigation.navigate("LoggedInMainMenu");
+        })
+        .catch((error) => {
+          if (error.response) {
+            alert(error.response.data);
+            console.log(error.response.data);
+          } else {
+            alert(error.message);
+            console.log(error.message);
+          }
+        });
+    }
+
+    createTracking();
   };
 
   const handlePeriodSelection = (selectedPeriod) => {
     setSelectedPeriod(selectedPeriod);
   };
 
-  const handleSubmit = async () => {
+  const handleUrlSubmit = async () => {
     setIsSubmitting(true);
     // validate the URL input value and save it to the database
     if (isValidUrl(url)) {
@@ -56,7 +80,7 @@ const NewTrackingScreen = ({ navigation }) => {
           setSizes(res.data);
         })
         .catch((error) => {
-          alert("Error. Try again!")
+          alert("Error. Try again!");
           console.log(error);
         });
     }
@@ -85,7 +109,7 @@ const NewTrackingScreen = ({ navigation }) => {
         value={url}
         onChangeText={setUrl}
       />
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.button} onPress={handleUrlSubmit}>
         <Text style={styles.buttonText}>Confirm URL</Text>
       </TouchableOpacity>
       <Text style={styles.label}>Size:</Text>
@@ -161,7 +185,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#ffffff"
+    color: "#ffffff",
   },
   input: {
     width: "100%",

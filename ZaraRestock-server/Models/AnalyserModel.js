@@ -10,14 +10,14 @@ async function getSizes(url) {
     value: "cookieValue",
     domain: "example.com",
     path: "/",
-    expires: Date.now() / 1000 + 2, // Expires in 2 seconds
+    expires: Date.now() / 1000 + 1, // Expires in 1 second
   });
   await page.setUserAgent(
     user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
   );
   try {
     await page.goto(url);
-    await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
+    //await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
     await page.evaluate(() => {
       const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
       if (cookiePrompt) {
@@ -63,14 +63,14 @@ async function checkSizeAvailability(url, size) {
     value: "cookieValue",
     domain: "example.com",
     path: "/",
-    expires: Date.now() / 1000 + 2, // Expires in 2 seconds
+    expires: Date.now() / 1000 + 1, // Expires in 1 second
   });
   await page.setUserAgent(
     user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
   );
   try {
     await page.goto(url);
-    await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
+    //await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
     await page.evaluate(() => {
       const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
       if (cookiePrompt) {

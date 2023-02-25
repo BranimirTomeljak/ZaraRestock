@@ -31,6 +31,18 @@ const RegisterScreen = ({ navigation }) => {
         console.log(res.data);
         await AsyncStorage.storeData("userid", res.data.id.toString());
         await AsyncStorage.storeData("username", res.data.username.toString());
+        await axios
+        .get("http://192.168.0.128:3000/api/login/startup", {
+          params: {
+            userid: res.data.id,
+          },
+        })
+        .then(async (res) => {
+          console.log("Logged in backend.");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
         navigation.navigate("LoggedInMainMenu");
       })
       .catch((error) => {

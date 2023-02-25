@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import axios from "axios";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoggedOutMainMenuScreen from "./screens/LoggedOutMainMenuScreen";
@@ -19,6 +20,22 @@ const App = () => {
       const userId = await AsyncStorage.getData("userid");
       setUserId(userId);
       setFetchComplete(true);
+
+      if(userId)  loginBackend(userId);
+    }
+    async function loginBackend(userId) {
+      await axios
+        .get("http://192.168.0.128:3000/api/login/startup", {
+          params: {
+            userid: userId,
+          },
+        })
+        .then(async (res) => {
+          console.log("Logged in backend.");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
     fetchUserId();
   }, []);
@@ -64,7 +81,6 @@ const App = () => {
     </NavigationContainer>
   );
 };
-
 
 export default App;
 
