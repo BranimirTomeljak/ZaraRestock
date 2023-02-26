@@ -84,11 +84,13 @@ const NewTrackingScreen = ({ navigation }) => {
           console.log(error);
         });
     }
+    else {alert("Wrong Zara URL format. Try another URL.")}
     setIsSubmitting(false);
   };
 
   const isValidUrl = (url) => {
-    return true;
+    const zaraUrlRegex = /https?:\/\/(?:www\.)?zara\.com\/[a-z]{2}\//;
+    return zaraUrlRegex.test(url);
   };
 
   const handleSizeSelection = (selectedSize) => {

@@ -17,7 +17,6 @@ async function getSizes(url) {
   );
   try {
     await page.goto(url);
-    //await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
     await page.evaluate(() => {
       const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
       if (cookiePrompt) {
@@ -70,7 +69,6 @@ async function checkSizeAvailability(url, size) {
   );
   try {
     await page.goto(url);
-    //await page.waitForSelector("#onetrust-consent-sdk", { timeout: 10000 });
     await page.evaluate(() => {
       const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
       if (cookiePrompt) {

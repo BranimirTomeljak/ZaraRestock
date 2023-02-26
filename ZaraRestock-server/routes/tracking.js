@@ -37,8 +37,6 @@ router.post("/create", async function (req, res) {
       res.status(500).send("Same tracking details exist.");
     else if (await tracking.isSavedToDb())
       res.status(500).send("Tracking exists.");
-    else if (await tracking.isRightFormat())
-      res.status(500).send("Not right format Zara URL");
     else {
       await save_to_db(tracking);
       res.json(tracking);

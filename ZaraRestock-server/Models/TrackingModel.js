@@ -94,7 +94,7 @@ class Tracking {
     return result;
   }
 
-  _stringify(a) {
+  /*_stringify(a) {
     if (a === undefined) return "NULL";
     return "'" + a + "'";
   }
@@ -111,7 +111,7 @@ class Tracking {
         return "'" + a + "'" + "::INTERVAL ";
       } else return "'" + a + "'";
     return a;
-  }
+  }*/
 
   //dobavi sve trackinge jednog user id-a
   static async getAllByUserId(userid) {
@@ -218,9 +218,6 @@ class Tracking {
     const result = await db.query(sql, []);
     return result.length > 0;
   }
-
-  //provjerava se ispravnost linka, jel Zara i jel radi
-  async isRightFormat() {}
 
   async updateDb() {
     console.log("updating...");
