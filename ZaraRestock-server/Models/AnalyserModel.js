@@ -5,27 +5,24 @@ const { DOMParser } = require("xmldom");
 async function getSizes(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.setCookie({
-    name: "cookieName",
-    value: "cookieValue",
-    domain: "example.com",
-    path: "/",
-    expires: Date.now() / 1000 + 1, // Expires in 1 second
-  });
   await page.setUserAgent(
     user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
   );
   try {
     await page.goto(url);
-    await page.evaluate(() => {
+    /*await page.evaluate(() => {
       const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
       if (cookiePrompt) {
         cookiePrompt.remove();
       }
-    });
-    await page.waitForSelector(".product-size-info__main-label", {
-      timeout: 10000,
-    });
+    });*/
+    await page
+      .waitForSelector(".product-size-info__main-label", {
+        timeout: 10000,
+      })
+      .catch(() => {
+        throw new Error("Size label not found");
+      });
 
     const html = await page.content();
     const parser = new DOMParser();
@@ -47,7 +44,7 @@ async function getSizes(url) {
 
     return sizesList;
   } catch (error) {
-    console.error(`An error occurred: ${error}`);
+    console.error(`${error}`);
     return false;
   } finally {
     await browser.close();
@@ -62,15 +59,19 @@ async function checkSizeAvailability(url, size) {
   );
   try {
     await page.goto(url);
-    await page.evaluate(() => {
+    /*await page.evaluate(() => {
       const cookiePrompt = document.querySelector("#onetrust-consent-sdk");
       if (cookiePrompt) {
         cookiePrompt.remove();
       }
-    });
-    await page.waitForSelector(".product-size-info__main-label", {
-      timeout: 10000,
-    });
+    });*/
+    await page
+      .waitForSelector(".product-size-info__main-label", {
+        timeout: 10000,
+      })
+      .catch(() => {
+        throw new Error("Size label not found");
+      });
 
     const html = await page.content();
     const parser = new DOMParser();
@@ -95,7 +96,7 @@ async function checkSizeAvailability(url, size) {
     console.error("tugica");
     return false;
   } catch (error) {
-    console.error(`An error occurred: ${error}`);
+    console.error(`${error}`);
     return false;
   } finally {
     await browser.close();

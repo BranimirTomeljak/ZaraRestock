@@ -1,8 +1,4 @@
 const db = require("../db");
-const add_hour = (date) => {
-  date.setHours(date.getHours() + 1);
-  return date;
-};
 
 const tracking_factory = (obj) => {
   return new Tracking(
@@ -39,7 +35,6 @@ class Tracking {
     let trackings = await Tracking.dbGetBy("trackings", property, id);
     let toreturn = [];
     for (let tracking of trackings) {
-      tracking.created_on = add_hour(tracking.created_on);
       toreturn.push(tracking_factory(tracking));
     }
     return toreturn;
@@ -99,27 +94,9 @@ class Tracking {
     return "'" + a + "'";
   }
 
-  /*static _stringify_all(a) {
-    if (a === undefined || a === null) return "NULL";
-    if (a.toISOString !== undefined)
-      a = a.toISOString().slice(0, 19).replace("T", " ");
-
-    if (typeof a === "string")
-      if (a.indexOf("-") > -1) return "'" + a + "'" + "::TIMESTAMP ";
-      else if (a.indexOf("P0Y0") > -1) {
-        a = a.split(" ")[1].replace(/[HM]/g, ":").replace("S", "");
-        return "'" + a + "'" + "::INTERVAL ";
-      } else return "'" + a + "'";
-    return a;
-  }*/
-
   //dobavi sve trackinge jednog user id-a
   static async getAllByUserId(userid) {
-    var all = await Tracking.dbGetBy(
-      "trackings",
-      "userid",
-      "'"+userid+"'"
-    );
+    var all = await Tracking.dbGetBy("trackings", "userid", "'" + userid + "'");
     var allTrackings = [];
     for (const tracking of all) {
       allTrackings.push(
@@ -136,7 +113,7 @@ class Tracking {
     }
     return allTrackings;
   }
-  
+
   //dobavi trackinge koji traju
   static async getInProgress() {
     var inProgress = await Tracking.dbGetBy(

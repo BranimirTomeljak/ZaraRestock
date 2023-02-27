@@ -2,12 +2,6 @@ var express = require("express");
 var router = express.Router();
 var Tracking = require("../models/TrackingModel");
 
-const curr_date_factory = () => {
-  date = new Date();
-  date.setHours(date.getHours() + 1);
-  return date;
-};
-
 router.get("/", async function (req, res) {
   let { userid } = req.query;
   var trackings = await Tracking.getAllByUserId(userid);
@@ -47,7 +41,7 @@ const tracking_factory = (userid, url, size, until) => {
     userid,
     url,
     size,
-    curr_date_factory().toISOString().slice(0, 19).replace("T", " "),
+    (new Date()).toISOString().slice(0, 19).replace("T", " "),
     until.toISOString().slice(0, 19).replace("T", " "),
     "in-progress"
   );
