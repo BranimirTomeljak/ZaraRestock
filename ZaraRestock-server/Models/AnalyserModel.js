@@ -24,7 +24,7 @@ async function getSizes(url) {
       }
     });
     await page.waitForSelector(".product-size-info__main-label", {
-      timeout: 30000,
+      timeout: 10000,
     });
 
     const html = await page.content();
@@ -57,13 +57,6 @@ async function getSizes(url) {
 async function checkSizeAvailability(url, size) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.setCookie({
-    name: "cookieName",
-    value: "cookieValue",
-    domain: "example.com",
-    path: "/",
-    expires: Date.now() / 1000 + 1, // Expires in 1 second
-  });
   await page.setUserAgent(
     user_agents_list[Math.floor(Math.random() * user_agents_list.length)]
   );
@@ -76,7 +69,7 @@ async function checkSizeAvailability(url, size) {
       }
     });
     await page.waitForSelector(".product-size-info__main-label", {
-      timeout: 30000,
+      timeout: 10000,
     });
 
     const html = await page.content();
@@ -114,9 +107,6 @@ module.exports = {
   checkSizeAvailability: checkSizeAvailability,
 };
 
-
-//const crawlers = require('crawler-user-agents');
-//console.log(crawlers);
 var user_agents_list = [
   "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",

@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-//const db = require("../db");
 const { User } = require("../models/UserModel");
 
 async function sendEmail(purpose, tracking) {

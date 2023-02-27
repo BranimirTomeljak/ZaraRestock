@@ -4,13 +4,14 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
-  Button,
   StyleSheet,
+  Keyboard,
 } from "react-native";
+import { Root } from "popup-ui";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 const AsyncStorage = require("../models/AsyncStorageModel");
+const Popup = require("../models/PopupModel");
 
 const LoginScreen = ({ navigation }) => {
   const [mail, setMail] = useState("");
@@ -24,41 +25,44 @@ const LoginScreen = ({ navigation }) => {
       })
       .then(async (res) => {
         if (res.status === 200) {
-          const { id, username } = res.data;
+          const { id } = res.data;
           await AsyncStorage.storeData("userid", id.toString());
-          await AsyncStorage.storeData("username", username.toString());
           navigation.navigate("LoggedInMainMenu");
         }
       })
       .catch((error) => {
         console.log(error);
-        Alert.alert("Error", "Invalid credentials. Please try again.");
+        Keyboard.dismiss();
+        Popup.warningPopup("Invalid credentials. Please try again.");
+        setPassword("");
       });
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Mail"
-        placeholderTextColor="#d3d3d3"
-        value={mail}
-        onChangeText={(value) => setMail(value)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#d3d3d3"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={(value) => setPassword(value)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <StatusBar style="dark" />
-    </View>
+    <Root>
+      <View style={styles.container}>
+        <Text style={styles.title}>Login</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Mail"
+          placeholderTextColor="#d3d3d3"
+          value={mail}
+          onChangeText={(value) => setMail(value)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#d3d3d3"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={(value) => setPassword(value)}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <StatusBar style="dark" />
+      </View>
+    </Root>
   );
 };
 

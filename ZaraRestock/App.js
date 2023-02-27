@@ -30,9 +30,6 @@ const App = () => {
             userid: userId,
           },
         })
-        .then(async (res) => {
-          console.log("Logged in backend.");
-        })
         .catch((error) => {
           console.log(error);
         });

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Button, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 const AsyncStorage = require("../models/AsyncStorageModel");
@@ -9,7 +9,6 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
     // Clear local storage
     try {
       await AsyncStorage.removeValue("userid");
-      await AsyncStorage.removeValue("username");
     } catch (error) {
       console.error(error);
     }

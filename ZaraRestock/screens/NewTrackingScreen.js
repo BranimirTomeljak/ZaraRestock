@@ -6,10 +6,13 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
+  Keyboard
 } from "react-native";
+import { Root } from "popup-ui";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 const AsyncStorage = require("../models/AsyncStorageModel");
+const Popup = require("../models/PopupModel");
 
 const NewTrackingScreen = ({ navigation }) => {
   const [url, setUrl] = useState("");
@@ -30,8 +33,9 @@ const NewTrackingScreen = ({ navigation }) => {
   }, []);
 
   const handleAddTracking = async () => {
-    if (selectedSizes.length === 0 || !selectedPeriod) {
-      alert("Please fill in all fields.");
+    if (!url || selectedSizes.length === 0 || !selectedPeriod) {
+      Keyboard.dismiss();
+      Popup.warningPopup("Please fill in all fields.");
       return;
     }
 
@@ -47,14 +51,17 @@ const NewTrackingScreen = ({ navigation }) => {
         })
         .then((res) => {
           console.log(res.data);
-          navigation.navigate("LoggedInMainMenu");
+          Keyboard.dismiss();
+          Popup.successPopupNavigation("Succcessfully added new tracking.", navigation, "LoggedInMainMenu");
         })
         .catch((error) => {
           if (error.response) {
-            alert(error.response.data);
+            Keyboard.dismiss();
+            Popup.dangerPopup(error.response.data);
             console.log(error.response.data);
           } else {
-            alert(error.message);
+            Keyboard.dismiss();
+            Popup.dangerPopup(error.message);
             console.log(error.message);
           }
         });
@@ -69,7 +76,6 @@ const NewTrackingScreen = ({ navigation }) => {
 
   const handleUrlSubmit = async () => {
     setIsSubmitting(true);
-    // validate the URL input value and save it to the database
     if (isValidUrl(url)) {
       await axios
         .post("http://192.168.0.128:3000/api/analyser/sizes", {
@@ -80,11 +86,21 @@ const NewTrackingScreen = ({ navigation }) => {
           setSizes(res.data);
         })
         .catch((error) => {
-          alert("Error. Try again!");
-          console.log(error);
+          if (error.response) {
+            Keyboard.dismiss();
+            Popup.dangerPopup(error.response.data);
+            console.log(error.response.data);
+          } else {
+            Keyboard.dismiss();
+            Popup.dangerPopup(error.message);
+            console.log(error.message);
+          }
         });
+    } else {
+      Keyboard.dismiss();
+      Popup.warningPopup("Wrong Zara URL format. Try another URL.");
+      setUrl("");
     }
-    else {alert("Wrong Zara URL format. Try another URL.")}
     setIsSubmitting(false);
   };
 
@@ -102,76 +118,84 @@ const NewTrackingScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Add New Tracking</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="URL"
-        placeholderTextColor="#d3d3d3"
-        value={url}
-        onChangeText={setUrl}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleUrlSubmit}>
-        <Text style={styles.buttonText}>Confirm URL</Text>
-      </TouchableOpacity>
-      <Text style={styles.label}>Size:</Text>
-      {isSubmitting && <ActivityIndicator />}
-      <View style={styles.radioContainer}>
-        {sizes.map((size) => (
+    <Root>
+      <View style={styles.container}>
+        <Text style={styles.header}>Add New Tracking</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="URL"
+          placeholderTextColor="#d3d3d3"
+          value={url}
+          onChangeText={setUrl}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleUrlSubmit}>
+          <Text style={styles.buttonText}>Confirm URL</Text>
+        </TouchableOpacity>
+        <Text style={styles.label}>Size:</Text>
+        {isSubmitting && <ActivityIndicator />}
+        <View style={styles.radioContainer}>
+          {sizes.map((size) => (
+            <TouchableOpacity
+              key={size}
+              style={
+                selectedSizes.includes(size)
+                  ? styles.radioSelected
+                  : styles.radio
+              }
+              onPress={() => handleSizeSelection(size)}
+            >
+              <Text style={styles.radioText}>{size}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <Text style={styles.label}>Period:</Text>
+        <View style={styles.radioContainer}>
           <TouchableOpacity
-            key={size}
-            style={
-              selectedSizes.includes(size) ? styles.radioSelected : styles.radio
-            }
-            onPress={() => handleSizeSelection(size)}
+            style={[
+              styles.radio,
+              selectedPeriod === "1 week" ? styles.radioSelected : styles.radio,
+            ]}
+            onPress={() => handlePeriodSelection("1 week")}
           >
-            <Text style={styles.radioText}>{size}</Text>
+            <Text style={styles.radioText}>1 week</Text>
           </TouchableOpacity>
-        ))}
+          <TouchableOpacity
+            style={[
+              selectedPeriod === "1 month"
+                ? styles.radioSelected
+                : styles.radio,
+            ]}
+            onPress={() => handlePeriodSelection("1 month")}
+          >
+            <Text style={styles.radioText}>1 month </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.radio,
+              selectedPeriod === "6 months"
+                ? styles.radioSelected
+                : styles.radio,
+            ]}
+            onPress={() => handlePeriodSelection("6 months")}
+          >
+            <Text style={styles.radioText}>6 months</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.radio,
+              selectedPeriod === "1 year" ? styles.radioSelected : styles.radio,
+            ]}
+            onPress={() => handlePeriodSelection("1 year")}
+          >
+            <Text style={styles.radioText}>1 year</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleAddTracking}>
+          <Text style={styles.buttonText}>Add Tracking</Text>
+        </TouchableOpacity>
+        <StatusBar style="dark" />
       </View>
-      <Text style={styles.label}>Period:</Text>
-      <View style={styles.radioContainer}>
-        <TouchableOpacity
-          style={[
-            styles.radio,
-            selectedPeriod === "1 week" ? styles.radioSelected : styles.radio,
-          ]}
-          onPress={() => handlePeriodSelection("1 week")}
-        >
-          <Text style={styles.radioText}>1 week</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            selectedPeriod === "1 month" ? styles.radioSelected : styles.radio,
-          ]}
-          onPress={() => handlePeriodSelection("1 month")}
-        >
-          <Text style={styles.radioText}>1 month </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.radio,
-            selectedPeriod === "6 months" ? styles.radioSelected : styles.radio,
-          ]}
-          onPress={() => handlePeriodSelection("6 months")}
-        >
-          <Text style={styles.radioText}>6 months</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.radio,
-            selectedPeriod === "1 year" ? styles.radioSelected : styles.radio,
-          ]}
-          onPress={() => handlePeriodSelection("1 year")}
-        >
-          <Text style={styles.radioText}>1 year</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleAddTracking}>
-        <Text style={styles.buttonText}>Add Tracking</Text>
-      </TouchableOpacity>
-      <StatusBar style="dark" />
-    </View>
+    </Root>
   );
 };
 

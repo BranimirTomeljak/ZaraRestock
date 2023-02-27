@@ -15,7 +15,6 @@ CREATE SCHEMA public;
 
 const sql_create_users = `CREATE TABLE users (
     id int  GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    username text NOT NULL UNIQUE,
     mail text NOT NULL UNIQUE,
     password text NOT NULL
 )`;
@@ -37,11 +36,11 @@ const sql_create_trackings = `CREATE TABLE trackings (
   FOREIGN KEY (userid) REFERENCES users(id)
 )`;
 
-const sql_insert_users = `INSERT INTO users (username, mail, password) VALUES 
-('AaBb', 'aabb0@gmail.com', 'password1'),
-('CcDd', 'ccdd0@gmail.com', 'password2'),
-('EeFf', 'eeff@gmail.com', 'password3'),
-('GgHh', 'gghh@gmail.com', 'password4')
+const sql_insert_users = `INSERT INTO users (mail, password) VALUES 
+('aabb0@gmail.com', 'password1'),
+('ccdd0@gmail.com', 'password2'),
+('eeff@gmail.com', 'password3'),
+('gghh@gmail.com', 'password4')
 `;
 
 const sql_insert_admin = `INSERT INTO admin (id) VALUES (4)`;
@@ -117,4 +116,4 @@ if (
   await pool.end();
 })();
 
-// sudo -u postgres psql -c 'create database test;'
+// psql -U postgres -d zararestock

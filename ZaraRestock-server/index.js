@@ -24,7 +24,6 @@ var analyserRouter = require("./routes/analyser");
 var loginRouter = require("./routes/login");
 var logoutRouter = require("./routes/logout");
 var registerRouter = require("./routes/register");
-var testRouter = require("./routes/test");
 var trackingRouter = require("./routes/tracking");
 
 app.use(cors());
@@ -34,13 +33,13 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Key we want to keep secret which will encrypt all of our information
-    resave: false, // Should we resave our session variables if nothing has changes which we dont
-    saveUninitialized: false, // Save empty value if there is no vaue which we do not want to do
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
   })
 );
-app.use(passport.initialize()); // Function inside passport which initializes passport
-app.use(passport.session()); // Store our variables to be persisted across the whole session. Works with app.use(Session) above
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(flash());
 app.use(cookieParser());
 
@@ -48,7 +47,6 @@ app.use("/api/analyser", analyserRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/register", registerRouter);
-app.use("/api/test", testRouter);
 app.use("/api/tracking", trackingRouter);
 
 // catch 404 and forward to error handler

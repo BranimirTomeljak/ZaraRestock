@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
   TouchableOpacity,
   Linking,
   ScrollView,
 } from "react-native";
+import { Root } from "popup-ui";
+import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 const AsyncStorage = require("../models/AsyncStorageModel");
+const Popup = require("../models/PopupModel");
 
 const MyTrackingsScreen = ({ navigation }) => {
   const [userid, setUserId] = useState(null);
@@ -39,7 +41,13 @@ const MyTrackingsScreen = ({ navigation }) => {
         setTrackings(trackings);
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response) {
+          Popup.dangerPopup(error.response.data);
+          console.log(error.response.data);
+        } else {
+          Popup.dangerPopup(error.message);
+          console.log(error.message);
+        }
       });
   };
 
@@ -56,8 +64,8 @@ const MyTrackingsScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <Root>
+      <ScrollView style={styles.container}>
         <View style={styles.row}>
           <Text style={styles.headerCell}>URL</Text>
           <Text style={styles.headerCell}>Size</Text>
@@ -83,8 +91,9 @@ const MyTrackingsScreen = ({ navigation }) => {
             </Text>
           </View>
         ))}
-      </View>
-    </ScrollView>
+        <StatusBar style="dark" />
+      </ScrollView>
+    </Root>
   );
 };
 

@@ -5,91 +5,120 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  Keyboard,
 } from "react-native";
+import { Root } from "popup-ui";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 const AsyncStorage = require("../models/AsyncStorageModel");
+const Popup = require("../models/PopupModel");
 
 const RegisterScreen = ({ navigation }) => {
-  const [username, setUserame] = useState("");
   const [mail, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = async () => {
+    if (!mail || !password || !confirmPassword) {
+      Keyboard.dismiss();
+      Popup.warningPopup("Please fill in all fields.");
+      return;
+    }
+    if (isValidEmail(mail) === false) {
+      Keyboard.dismiss();
+      Popup.warningPopup("Invalid email format.");
+      return;
+    }
+    if (password.length < 6) {
+      Keyboard.dismiss();
+      Popup.warningPopup("Password must be a least 6 characters long");
+      setPassword("");
+      setConfirmPassword("");
+      return;
+    }
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      Keyboard.dismiss();
+      Popup.warningPopup("Passwords do not match.");
+      setPassword("");
+      setConfirmPassword("");
       return;
     }
     await axios
       .post("http://192.168.0.128:3000/api/register", {
-        username,
         mail,
         password,
       })
       .then(async (res) => {
         console.log(res.data);
+        Keyboard.dismiss();
+        Popup.successPopupNavigation("Succcessfully registered.", navigation, "LoggedInMainMenu");
         await AsyncStorage.storeData("userid", res.data.id.toString());
-        await AsyncStorage.storeData("username", res.data.username.toString());
         await axios
-        .get("http://192.168.0.128:3000/api/login/startup", {
-          params: {
-            userid: res.data.id,
-          },
-        })
-        .then(async (res) => {
-          console.log("Logged in backend.");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-        navigation.navigate("LoggedInMainMenu");
+          .get("http://192.168.0.128:3000/api/login/startup", {
+            params: {
+              userid: res.data.id,
+            },
+          })
+          .then(async (res) => {
+            console.log("Logged in backend.");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response) {
+          Keyboard.dismiss();
+          Popup.dangerPopup(error.response.data);
+          console.log(error.response.data);
+        } else {
+          Keyboard.dismiss();
+          Popup.dangerPopup(error.message);
+          console.log(error.message);
+        }
       });
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Register</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        placeholderTextColor="#d3d3d3"
-        value={username}
-        onChangeText={setUserame}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Mail"
-        placeholderTextColor="#d3d3d3"
-        value={mail}
-        onChangeText={setMail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#d3d3d3"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        placeholderTextColor="#d3d3d3"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-      <StatusBar style="dark" />
-    </View>
+    <Root>
+      <View style={styles.container}>
+        <Text style={styles.header}>Register</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Mail"
+          placeholderTextColor="#d3d3d3"
+          value={mail}
+          onChangeText={setMail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#d3d3d3"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          placeholderTextColor="#d3d3d3"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+        <StatusBar style="dark" />
+      </View>
+    </Root>
   );
 };
+
+function isValidEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
 
 const styles = StyleSheet.create({
   container: {

@@ -1,14 +1,11 @@
 var express = require("express");
 var router = express.Router();
-//const db = require("../db");
 var Tracking = require("../models/TrackingModel");
 
-const add_hour = (date) => {
+const curr_date_factory = () => {
+  date = new Date();
   date.setHours(date.getHours() + 1);
   return date;
-};
-const curr_date_factory = () => {
-  return add_hour(new Date());
 };
 
 router.get("/", async function (req, res) {

@@ -2,14 +2,8 @@ const db = require("../db");
 
 class User {
   //konstruktor korisnika
-  constructor(
-    id = undefined,
-    username = undefined,
-    mail = undefined,
-    password = undefined
-  ) {
+  constructor(id = undefined, mail = undefined, password = undefined) {
     this.id = id;
-    this.username = username;
     this.mail = mail;
     this.password = password;
   }
@@ -21,12 +15,7 @@ class User {
     let newUser = undefined;
 
     if (results.length > 0) {
-      newUser = new User(
-        results[0].id,
-        results[0].username,
-        results[0].mail,
-        results[0].password
-      );
+      newUser = new User(results[0].id, results[0].mail, results[0].password);
     }
     return newUser;
   }
@@ -37,41 +26,18 @@ class User {
     let newUser = new User();
 
     if (results.length > 0) {
-      newUser = new User(
-        results[0].id,
-        results[0].username,
-        results[0].mail,
-        results[0].password
-      );
-    }
-    return newUser;
-  }
-
-  //dohvat korisnika na osnovu username korisnika (tablica users)
-  static async fetchByUsername(username) {
-    let results = await User.dbGetUserBy("username", "'"+username+"'", "users");
-    let newUser = new User();
-    if (results.length > 0) {
-      newUser = new User(
-        results[0].id,
-        results[0].username,
-        results[0].mail,
-        results[0].password
-      );
+      newUser = new User(results[0].id, results[0].mail, results[0].password);
     }
     return newUser;
   }
 
   static async getAll() {
-    const sql =
-      "SELECT users.id, users.username, users.mail, users.password FROM users";
+    const sql = "SELECT users.id, users.mail, users.password FROM users";
     const results = await db.query(sql, []);
     if (results.length === 0) throw "user all does not exist";
     let toreturn = [];
     for (let result of results)
-      toreturn.push(
-        new User(result.id, result.username, result.mail, result.password)
-      );
+      toreturn.push(new User(result.id, result.mail, result.password));
     return toreturn;
   }
 
@@ -115,9 +81,7 @@ class User {
       throw "cannot have defined id and try to save the user";
 
     const sql =
-      "INSERT INTO users (username, mail, password) VALUES ('" +
-      this.username +
-      "', '" +
+      "INSERT INTO users (mail, password) VALUES ('" +
       this.mail +
       "', '" +
       this.password +
@@ -147,13 +111,13 @@ class User {
   }
 
   copySelfUser() {
-    return User(this.id, this.username, this.mail, this.password);
+    return User(this.id, this.mail, this.password);
   }
 }
 
 class Admin extends User {
-  constructor(id, username, mail, password) {
-    super(id, username, mail, password);
+  constructor(id, mail, password) {
+    super(id, mail, password);
   }
   async addToDb() {
     if (await this.isUserInDb()) console.log("user already there");
@@ -168,7 +132,7 @@ class Admin extends User {
     const sql = "SELECT * FROM admin WHERE id = " + id;
     const result = await db.query(sql, []);
     if (result.length === 0) throw "admin does not exist";
-    return new Admin(user.id, user.username, user.mail, user.password);
+    return new Admin(user.id, user.mail, user.password);
   }
 }
 

@@ -94,12 +94,12 @@ class Tracking {
     return result;
   }
 
-  /*_stringify(a) {
+  _stringify(a) {
     if (a === undefined) return "NULL";
     return "'" + a + "'";
   }
 
-  static _stringify_all(a) {
+  /*static _stringify_all(a) {
     if (a === undefined || a === null) return "NULL";
     if (a.toISOString !== undefined)
       a = a.toISOString().slice(0, 19).replace("T", " ");
