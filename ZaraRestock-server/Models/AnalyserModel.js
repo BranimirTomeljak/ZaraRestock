@@ -79,7 +79,6 @@ async function checkSizeAvailability(url, size) {
 
     const elements = xpath.select('//*[@data-qa-action="size-in-stock"]', doc);
     if (!elements.length) {
-      console.error(`Nema, tugy plaky`);
       return false;
     }
 
@@ -89,11 +88,9 @@ async function checkSizeAvailability(url, size) {
         element
       )[0].textContent;
       if (sizeString === size) {
-        console.log("IMA aleale");
         return true;
       }
     }
-    console.error("tugica");
     return false;
   } catch (error) {
     console.error(`${error}`);

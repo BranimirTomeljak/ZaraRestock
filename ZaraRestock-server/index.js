@@ -17,7 +17,7 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 
-const initializePassport = require("./db/passportConfig");
+const initializePassport = require("./bin/passportConfig");
 initializePassport(passport);
 
 var analyserRouter = require("./routes/analyser");
