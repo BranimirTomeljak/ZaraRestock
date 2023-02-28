@@ -11,6 +11,12 @@ router.post("/sizes", async function (req, res) {
   else res.json(sizes);
 });
 
+router.post("/check", async function (req, res) {
+  available = await Analyser.checkSizeAvailability("https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686", "M");
+  if (available) res.sendStatus(200);
+  else res.sendStatus(404);
+});
+
 async function runPeriodically() {
   setInterval(async () => {
     let inProgress = await Tracking.getInProgress();
