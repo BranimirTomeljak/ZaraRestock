@@ -1,11 +1,14 @@
 const {Pool} = require('pg');
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
+    user: 'zararestock_user',
+    host: 'frankfurt-postgres.render.com',
     database: 'zararestock',
-    password: 'bazepodataka',
+    password: 'jh8tkBdPd82dqetoRMGhHVmMK8wVeyNQ',
     port: 5432,
+    ssl: {
+        rejectUnauthorized: false
+      }
 });
 
 dangerous_query = async (text, params) => {
