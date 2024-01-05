@@ -10,6 +10,8 @@ import {
 import { Root } from "popup-ui";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
+import * as Network from "expo-network";
+import * as Constants from 'expo-constants';
 const AsyncStorage = require("../models/AsyncStorageModel");
 const Popup = require("../models/PopupModel");
 
@@ -18,8 +20,17 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+    var ipaddress;
+    const getipaddress = async () => {
+      ipaddress = await Network.getIpAddressAsync();
+      console.log(ipaddress); // Move the console.log statement here
+    };
+    getipaddress();
+
+    console.log("asdasd");
+
     await axios
-      .post("http://192.168.0.128:3000/api/login", {
+      .post("http://192.168.18.128:3000/api/login", {
         mail,
         password,
       })
@@ -33,7 +44,7 @@ const LoginScreen = ({ navigation }) => {
       .catch((error) => {
         console.log(error);
         Keyboard.dismiss();
-        Popup.warningPopup("Invalid credentials. Please try again.");
+        Popup.warningPopup("Error. Please try again.");
         setPassword("");
       });
   };

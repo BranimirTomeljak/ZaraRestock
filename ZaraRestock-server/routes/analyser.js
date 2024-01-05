@@ -30,11 +30,11 @@ async function runPeriodically() {
       if (result) {
         tracking.success = "true";
         await tracking.updateDb();
-        //Notification.sendEmail("found", tracking);
+        Notification.sendEmail("found", tracking);
       } else if (tracking.until < new Date()) {
         tracking.success = "false";
         await tracking.updateDb();
-        //Notification.sendEmail("timeout", tracking);
+        Notification.sendEmail("timeout", tracking);
       }
 
       let iterationDelay = 45000 / inProgress.length;
@@ -43,6 +43,6 @@ async function runPeriodically() {
   }, 60000 + Math.random() * 30000); // random[60, 90] seconds
 }
 
-//runPeriodically();
+runPeriodically();
 
 module.exports = router;

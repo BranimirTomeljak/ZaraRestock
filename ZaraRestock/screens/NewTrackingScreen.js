@@ -43,7 +43,7 @@ const NewTrackingScreen = ({ navigation }) => {
 
     async function createTracking() {
       await axios
-        .post("http://192.168.0.128:3000/api/tracking/create", {
+        .post("http://192.168.18.128:3000/api/tracking/create", {
           userid: userId,
           url,
           sizes: selectedSizes,
@@ -78,7 +78,7 @@ const NewTrackingScreen = ({ navigation }) => {
     setIsSubmitting(true);
     if (isValidUrl(url)) {
       await axios
-        .post("http://192.168.0.128:3000/api/analyser/sizes", {
+        .post("http://192.168.18.128:3000/api/analyser/sizes", {
           url,
         })
         .then((res) => {
@@ -105,9 +105,9 @@ const NewTrackingScreen = ({ navigation }) => {
   };
 
   const isValidUrl = (url) => {
-    const zaraUrlRegex = /https?:\/\/(?:www\.)?zara\.com\/[a-z]{2}\//;
+    const zaraUrlRegex = /\.zara\.com/;
     return zaraUrlRegex.test(url);
-  };
+};
 
   const handleSizeSelection = (selectedSize) => {
     setSelectedSizes((selected) =>

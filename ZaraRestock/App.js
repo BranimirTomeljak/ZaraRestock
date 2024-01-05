@@ -25,7 +25,7 @@ const App = () => {
     }
     async function loginBackend(userId) {
       await axios
-        .get("http://192.168.0.128:3000/api/login/startup", {
+        .get("http://192.168.18.128:3000/api/login/startup", {
           params: {
             userid: userId,
           },

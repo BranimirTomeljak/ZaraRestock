@@ -13,7 +13,7 @@ const LoggedInMainMenuScreen = ({ navigation }) => {
       console.error(error);
     }
 
-    const res = await axios.get("http://192.168.0.128:3000/api/logout", {});
+    const res = await axios.get("http://192.168.18.128:3000/api/logout", {});
 
     // Navigate back to the login screen
     navigation.navigate("LoggedOutMainMenu");

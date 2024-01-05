@@ -44,7 +44,7 @@ const RegisterScreen = ({ navigation }) => {
       return;
     }
     await axios
-      .post("http://192.168.0.128:3000/api/register", {
+      .post("http://192.168.18.128:3000/api/register", {
         mail,
         password,
       })
@@ -54,7 +54,7 @@ const RegisterScreen = ({ navigation }) => {
         Popup.successPopupNavigation("Succcessfully registered.", navigation, "LoggedInMainMenu");
         await AsyncStorage.storeData("userid", res.data.id.toString());
         await axios
-          .get("http://192.168.0.128:3000/api/login/startup", {
+          .get("http://192.168.18.128:3000/api/login/startup", {
             params: {
               userid: res.data.id,
             },
