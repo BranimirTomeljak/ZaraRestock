@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var Tracking = require("../models/TrackingModel");
+var Tracking = require("../Models/TrackingModel");
 
 router.get("/", async function (req, res) {
   let { userid } = req.query;

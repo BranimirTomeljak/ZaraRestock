@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const bcrypt = require("bcrypt");
-const { User } = require("../models/UserModel");
+const { User } = require("../Models/UserModel");
 
 router.post("/", async (req, res) => {
   let { mail, password } = req.body;

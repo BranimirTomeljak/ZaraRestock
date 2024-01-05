@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { User } = require("../models/UserModel");
+const { User } = require("../Models/UserModel");
 
 async function sendEmail(purpose, tracking) {
   const user = await User.fetchById(tracking.userid);

@@ -1,7 +1,7 @@
 var express = require("express");
 const Tracking = require("../Models/TrackingModel");
 const Notification = require("../Models/NotificationModel");
-const Analyser = require("../models/AnalyserModel");
+const Analyser = require("../Models/AnalyserModel");
 var router = express.Router();
 
 router.post("/sizes", async function (req, res) {

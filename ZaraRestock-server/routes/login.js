@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const passport = require("passport");
-const { User, Admin } = require("../models/UserModel");
+const { User, Admin } = require("../Models/UserModel");
 
 router.post(
   "/",
