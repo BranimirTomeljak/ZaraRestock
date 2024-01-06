@@ -12,7 +12,9 @@ router.post("/sizes", async function (req, res) {
 });
 
 router.get("/check", async function (req, res) {
+  console.log("1111")
   available = await Analyser.checkSizeAvailability("https://www.zara.com/hr/hr/elasticna-majica-sa-sirokim-naramenicama-p03905931.html?v1=232669686", "M");
+  console.log("2222")
   if (available) res.sendStatus(200);
   else res.sendStatus(404);
 });

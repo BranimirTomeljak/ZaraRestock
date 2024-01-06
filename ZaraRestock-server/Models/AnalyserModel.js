@@ -10,6 +10,8 @@ async function getSizes(url) {
     const page = await browser.newPage();
     await page.setUserAgent(new UserAgent().toString());
     await page.goto(url);
+    console.log(page);
+    console.log(url);
     await page
       .waitForSelector(".product-size-info__main-label")
       .catch(() => {
