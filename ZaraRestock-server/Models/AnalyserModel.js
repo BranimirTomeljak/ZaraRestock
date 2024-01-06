@@ -11,7 +11,7 @@ async function getSizes(url) {
     await page.setUserAgent(new UserAgent().toString());
     await page.goto(url);
     await page
-      .waitForSelector(".product-size-info__main-label", { timeout: 10000 })
+      .waitForSelector(".product-size-info__main-label")
       .catch(() => {
         throw new Error("Size label not found");
       });
@@ -46,7 +46,7 @@ async function checkSizeAvailability(url, size) {
     await page.setUserAgent(new UserAgent().toString());
     await page.goto(url);
     await page
-      .waitForSelector(".product-size-info__main-label", { timeout: 10000 })
+      .waitForSelector(".product-size-info__main-label")
       .catch(() => {
         throw new Error("Size label not found");
       });
