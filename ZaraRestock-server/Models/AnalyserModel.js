@@ -48,18 +48,27 @@ async function getSizes(url) {
 async function checkSizeAvailability(url, size) {
   let browser;
   try {
+    console.log("11")
     browser = await puppeteer.launch();
+    console.log("22")
     const page = await browser.newPage();
+    console.log("33")
     await page.setUserAgent(new UserAgent().toString());
+    console.log("44")
     await page.goto(url);
+    console.log("55")
     await page
       .waitForSelector(".product-size-info__main-label")
       .catch(() => {
         throw new Error("Size label not found");
       });
+    console.log("66")
     const html = await page.content();
+    console.log("77")
     const parser = new DOMParser();
+    console.log("88")
     const doc = parser.parseFromString(html, "text/html");
+    console.log("99")
     const elements = xpath.select('//*[@data-qa-action="size-in-stock"]', doc);
     if (!elements.length) {
       return false;
