@@ -57,6 +57,8 @@ async function checkSizeAvailability(url, size) {
     console.log("44")
     await page.goto(url);
     console.log("55")
+    console.log(page.html());
+
     await page
       .waitForSelector(".product-size-info__main-label")
       .catch(() => {
