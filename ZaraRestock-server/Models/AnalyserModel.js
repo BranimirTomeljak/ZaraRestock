@@ -6,10 +6,15 @@ const UserAgent = require("user-agents");
 async function getSizes(url) {
   let browser;
   try {
+    console.log("1")
     browser = await puppeteer.launch();
+    console.log("2")
     const page = await browser.newPage();
+    console.log("3")
     await page.setUserAgent(new UserAgent().toString());
+    console.log("4")
     await page.goto(url);
+    console.log("5")
     console.log(page);
     console.log(url);
     await page
