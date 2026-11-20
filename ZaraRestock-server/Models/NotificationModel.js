@@ -8,7 +8,7 @@ async function sendEmail(purpose, tracking) {
     service: "hotmail",
     auth: {
       user: "zararestock@outlook.com",
-      pass: "alezaraale1950",
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 
